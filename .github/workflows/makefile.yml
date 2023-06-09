@@ -1,0 +1,40 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build dep GnuTLS
+      run: |
+        git clone https://github.com/gnutls/gnutls
+        cd gnutls
+        git checkout 3.7.9
+        sudo apt install gperf autopoint gtk-doc-tools nettle-dev libidn-dev libtasn1-dev libev-dev p11-kit-devl ibtasn1-bin texinfo
+        ./bootstrap
+        ./configure --prefix=/usr --with-included-libtasn1 --with-included-unistring
+        make && sudo make install
+        cd -
+
+    - name: Configure
+      run: |
+        sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev liba52-0.7.4-dev
+        sudo apt install flex bison gettext
+        ./bootstrap
+        cwd=`pwd`
+        ./configure --enable-debug --prefix=$cwd/libvlc-dev --disable-lua --disable-xcb --disable-qt --enable-gnutls
+
+    - name: Build
+      run: make
+
+    - name: Install
+      run: make install
