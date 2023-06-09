@@ -27,7 +27,7 @@ jobs:
 
     - name: Configure
       run: |
-        sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev liba52-0.7.4-dev
+        sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev liba52-0.7.4-dev libasound2-dev
         sudo apt install flex bison gettext
         ./bootstrap
         cwd=`pwd`
